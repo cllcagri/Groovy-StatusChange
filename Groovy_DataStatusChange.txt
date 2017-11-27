@@ -1,0 +1,39 @@
+import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
+
+
+	def flexibleSearchService = spring.getBean('flexibleSearchService');
+	def modelService = spring.getBean('modelService');
+
+	//listeyi al
+	StringBuilder builder = new StringBuilder("SELECT {p.pk} FROM {Product  AS p} WHERE {p.galleryImages} is null");
+	FlexibleSearchQuery query = new FlexibleSearchQuery(builder.toString());
+	List<ProductModel> productList =flexibleSearchService.search(query).getResult();
+	ArrayList<ProductModel> pList = new ArrayList();
+
+    // liste üzerinde dolaþ, her birinin statüsünü approval - check
+    Iterator<ProductModel> productIterator = productList.iterator();
+    while(productIterator.hasNext()){
+		ProductModel product = productIterator.next();    
+		product.setApprovalStatus(ArticleApprovalStatus.CHECK);
+		pList.add(product);
+    } 
+		//data save i parçalara böl
+		pList.collate(200).each{
+		modelService.saveAll(it);
+	}
+	
+	pList = new ArrayList();
+
+    while(productIterator.hasNext()){
+	  ProductModel product = productIterator.next(); 
+      if(productModel.getApprovalStatus().equals(ArticleApprovalStatus.CHECK)){
+        product.setApprovalStatus(ArticleApprovalStatus.APPROVED);     
+        pList.add(product);
+      }
+        
+        pList.collate(200).each{
+		modelService.saveAll(it);
+	}
+      
