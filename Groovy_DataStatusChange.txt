@@ -12,17 +12,17 @@ import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 	List<ProductModel> productList =flexibleSearchService.search(query).getResult();
 	ArrayList<ProductModel> pList = new ArrayList();
 
-    // liste üzerinde dolaþ, her birinin statüsünü approval - check
+    // liste Ã¼zerinde dolaÅ£, her birinin statÃ¼sÃ¼nÃ¼ approval - check
     Iterator<ProductModel> productIterator = productList.iterator();
     while(productIterator.hasNext()){
 		ProductModel product = productIterator.next();    
 		product.setApprovalStatus(ArticleApprovalStatus.CHECK);
 		pList.add(product);
     } 
-		//data save i parçalara böl
+		//data save i parÃ§alara bÃ¶l
 		pList.collate(200).each{
 		modelService.saveAll(it);
-	}
+	
 	
 	pList = new ArrayList();
 
